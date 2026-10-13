@@ -44,9 +44,11 @@ in {
       })
       selected)) cfg.targets);
 
-    xdg.configFile = mkMerge (mapAttrs' (name: value: {
+    # mapAttrs' already returns the attrset xdg.configFile wants; mkMerge would
+    # need a list and fails on a set.
+    xdg.configFile = mapAttrs' (name: value: {
       name = "agent-skills/${name}.json";
       value.text = builtins.toJSON value;
-    }) cfg.settings);
+    }) cfg.settings;
   };
 }
