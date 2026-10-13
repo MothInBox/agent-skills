@@ -17,6 +17,16 @@
       url = "github:nextlevelbuilder/ui-ux-pro-max-skill";
       flake = false;
     };
+    # Skills arrive as inputs, never stored in this repo: flake.lock pins an
+    # exact rev + narHash, so `nix flake update` is the only way to move them.
+    stop-slop = {
+      url = "github:hardikpandya/stop-slop";
+      flake = false;
+    };
+    ponytail = {
+      url = "github:DietrichGebert/ponytail";
+      flake = false;
+    };
   };
 
   outputs = {
@@ -86,9 +96,13 @@
     # shortcut: skill output is arch-independent, so one build serves every
     # system. Same reasoning as mkUnderstandCore above.
     sources = {
-      # Wrapped in an attrset: the derivation IS an attrset, so a bare value
-      # would merge its own attributes (type, drvPath, outPath, ...) into the
-      # registry as fake skills.
+      # Each is an attrset mapping skill name -> store path. A single-skill repo
+      # needs a hand-written entry because skillDirs expects a dir OF skill dirs.
+      stop-slop.stop-slop = inputs.stop-slop;
+      ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
+
+      # graphify's derivation IS an attrset, so it must be wrapped or its own
+      # attributes (type, drvPath, outPath, ...) land in the registry as skills.
       graphify.graphify = mkGraphifySkill "x86_64-linux";
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
@@ -119,7 +133,7 @@
 
     # Raw directories for consumers who place files themselves rather than via
     # the home-manager module: ponytail's slash commands and its plugin.
-    commandsDir = ./commands;
-    pluginsDir = ./plugins;
+    commandsDir = "${inputs.ponytail}/.opencode/command";
+    pluginsDir = "${inputs.ponytail}/.opencode/plugins";
   };
 }

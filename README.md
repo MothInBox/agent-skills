@@ -62,3 +62,21 @@ else (a nested layout, a build step) needs a small derivation in `packages`.
   moves its pnpm lockfile or `packageManager` pin.
 - Only opencode and Claude paths are meaningfully tested; codex/cursor targets
   follow the documented conventions but are unverified.
+
+## Upstream
+
+No third-party skill content is stored in this repository. Skills are fetched as
+`flake = false` inputs at evaluation time and pinned by `flake.lock` (exact rev
++ narHash), so `nix flake update` is the only way to move them. Only skills
+written for this repo live under `skills/`.
+
+| Skill | Upstream | License |
+|---|---|---|
+| stop-slop | github.com/hardikpandya/stop-slop | MIT |
+| ponytail | github.com/DietrichGebert/ponytail | MIT |
+| ui-ux-pro-max | github.com/nextlevelbuilder/ui-ux-pro-max-skill | MIT |
+| graphify | github.com/Graphify-Labs/graphify | MIT |
+
+`understand-anything` (github.com/Egonex-AI/Understand-Anything) is still
+vendored in source form, because its `packages/core` must be compiled. Its
+license was not verified when this was written — check it before redistributing.
