@@ -1,0 +1,78 @@
+{
+  "nodes": {
+    "graphify": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791887225,
+        "narHash": "sha256-p51NfAEyjZywpwfHiGz7RFPUft4gxPH2I3pO79Cew9w=",
+        "owner": "Graphify-Labs",
+        "repo": "graphify",
+        "rev": "e8eb76e797bed4f324bf0e1c262984a525aaab3e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Graphify-Labs",
+        "repo": "graphify",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1791734076,
+        "narHash": "sha256-i5qk1kLiit98rRbh1AXmWBNT9QXC/y4l5Wk/u5EdpDQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "graphify": "graphify",
+        "nixpkgs": "nixpkgs",
+        "ui-ux-pro-max": "ui-ux-pro-max",
+        "understand-anything": "understand-anything"
+      }
+    },
+    "ui-ux-pro-max": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791803283,
+        "narHash": "sha256-iLOtZr3VZV2fGVUcY0VEkE9kpvV/cWwhpgh/TY9Q3E8=",
+        "owner": "nextlevelbuilder",
+        "repo": "ui-ux-pro-max-skill",
+        "rev": "7246805992a42b7bba37d4cac83b01416f0c6c44",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nextlevelbuilder",
+        "repo": "ui-ux-pro-max-skill",
+        "type": "github"
+      }
+    },
+    "understand-anything": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791800699,
+        "narHash": "sha256-8QJy9PJKv9fSDzX9cPPmoqwM34s5JVT/FjcV50dfONE=",
+        "owner": "Egonex-AI",
+        "repo": "Understand-Anything",
+        "rev": "f2d0164f72fe678805c34245a6df36acededfebd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Egonex-AI",
+        "repo": "Understand-Anything",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
