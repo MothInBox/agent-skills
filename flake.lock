@@ -3,11 +3,11 @@
     "graphify": {
       "flake": false,
       "locked": {
-        "lastModified": 1791887225,
-        "narHash": "sha256-p51NfAEyjZywpwfHiGz7RFPUft4gxPH2I3pO79Cew9w=",
+        "lastModified": 1791931550,
+        "narHash": "sha256-naDpP4uyA/PBtEgeP4h1iMEetctrHOyk4p3IdkVs7NQ=",
         "owner": "Graphify-Labs",
         "repo": "graphify",
-        "rev": "e8eb76e797bed4f324bf0e1c262984a525aaab3e",
+        "rev": "041771be72229bb2c8d8205b9cc6871c6be52b91",
         "type": "github"
       },
       "original": {
