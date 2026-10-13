@@ -77,6 +77,7 @@
     sources = {
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
+      local = skillDirs ./skills;
     };
 
     # Flat registry: every skill from every source.
@@ -97,5 +98,10 @@
     homeManagerModules.default = import ./modules/agent-skills.nix skills;
 
     agentSkills = skills;
+
+    # Raw directories for consumers who place files themselves rather than via
+    # the home-manager module: ponytail's slash commands and its plugin.
+    commandsDir = ./commands;
+    pluginsDir = ./plugins;
   };
 }

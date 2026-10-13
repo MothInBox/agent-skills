@@ -1,6 +1,8 @@
 skills: {config, lib, ...}: let
   cfg = config.programs.agent-skills;
-  inherit (lib) mkOption types mkIf mkMerge;
+  inherit (lib) mkOption types mkIf mkMerge mapAttrs';
+  # An empty skills list installs everything in the registry.
+  selected = if cfg.skills == [] then builtins.attrNames skills else cfg.skills;
 in {
   options.programs.agent-skills = {
     enable = mkOption {
@@ -20,6 +22,18 @@ in {
       default = [".agents/skills" ".config/opencode/skills" ".claude/skills" ".codex/skills" ".cursor/skills"];
       description = "Relative skill directories to populate, one per agent.";
     };
+    settings = mkOption {
+      type = types.attrsOf types.attrs;
+      default = {};
+      example.graphify.outputDir = "~/graphs";
+      description = ''
+        Per-skill settings, written to
+        `$XDG_CONFIG_HOME/agent-skills/<name>.json`.
+
+        shortcut: no shipped skill reads this yet. It is the documented hook for
+        skills that want a config file; adopters must add a reader.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -28,6 +42,11 @@ in {
         name = "${target}/${name}";
         value.source = skills.${name};
       })
-      cfg.skills)) cfg.targets);
+      selected)) cfg.targets);
+
+    xdg.configFile = mkMerge (mapAttrs' (name: value: {
+      name = "agent-skills/${name}.json";
+      value.text = builtins.toJSON value;
+    }) cfg.settings);
   };
 }
