@@ -1,8 +1,19 @@
-skills: {config, lib, ...}: let
+{
+  skills,
+  cliPackages ? {},
+}: {config, lib, pkgs, ...}: let
   cfg = config.programs.agent-skills;
   inherit (lib) mkOption types mkIf mkMerge mapAttrs';
   # An empty skills list installs everything in the registry.
   selected = if cfg.skills == [] then builtins.attrNames skills else cfg.skills;
+
+  # CLI packages for whichever skills were selected. Resolved against the
+  # consumer's pkgs so there is only ever one nixpkgs instance in play.
+  clis = builtins.filter (n: n != null) (map (name:
+    if cliPackages ? ${name}
+    then pkgs.${cliPackages.${name}}
+    else null)
+  selected);
 in {
   options.programs.agent-skills = {
     enable = mkOption {
@@ -37,6 +48,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # CLIs ride along with whichever skills were selected.
+    home.packages = clis;
+
     home.file = mkMerge (map (target:
       builtins.listToAttrs (map (name: {
         name = "${target}/${name}";

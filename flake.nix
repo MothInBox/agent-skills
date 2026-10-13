@@ -74,7 +74,22 @@
     # shortcut: tsc output is arch-independent JS, so one build serves every
     # system. To go per-arch, make sources a function of system and expose
     # homeManagerModules via forAll.
+    # graphify ships lowercase skill-<agent>.md; agents want SKILL.md. This
+    # derivation is the skill directory itself, so it registers without the
+    # skillDirs helper (which expects a directory of skill dirs).
+    mkGraphifySkill = system:
+      nixpkgs.legacyPackages.${system}.runCommand "graphify-skill" {} ''
+        mkdir -p $out
+        cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
+      '';
+
+    # shortcut: skill output is arch-independent, so one build serves every
+    # system. Same reasoning as mkUnderstandCore above.
     sources = {
+      # Wrapped in an attrset: the derivation IS an attrset, so a bare value
+      # would merge its own attributes (type, drvPath, outPath, ...) into the
+      # registry as fake skills.
+      graphify.graphify = mkGraphifySkill "x86_64-linux";
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
       local = skillDirs ./skills;
@@ -83,19 +98,22 @@
     # Flat registry: every skill from every source.
     skills = lib.foldlAttrs (acc: _: set: acc // set) {} sources;
   in {
-    packages = forAll (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      # graphify ships lowercase skill-<agent>.md; agents want SKILL.md.
-      default = pkgs.runCommand "graphify-skill" {} ''
-        mkdir -p $out
-        cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
-      '';
+    packages = forAll (system: {
+      default = mkGraphifySkill system;
       understand-core = mkUnderstandCore system;
     });
 
     # Registry injected by partial application, so consumers need no plumbing.
-    homeManagerModules.default = import ./modules/agent-skills.nix skills;
+    # cliPackages maps skill name -> a package name resolved against the
+    # CONSUMER's pkgs, so the CLI comes from their nixpkgs rather than this
+    # flake's own instance. Only skills that actually need a CLI are listed.
+    homeManagerModules.default = import ./modules/agent-skills.nix {
+      inherit skills;
+      # graphify's CLI is not in nixpkgs-unstable, so it cannot be mapped here:
+      # building it needs 24 tree-sitter grammar pins. Once it lands in
+      # nixpkgs this becomes cliPackages.graphify = "graphify";
+      cliPackages = {};
+    };
 
     agentSkills = skills;
 
