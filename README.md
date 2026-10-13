@@ -55,10 +55,10 @@ else (a nested layout, a build step) needs a small derivation in `packages`.
 
 ## Caveats
 
-- **understand-anything is not runnable yet.** Its skill needs
-  `packages/core/dist`, which upstream builds with pnpm. No build derivation is
-  provided here yet, so the skill fails at Phase 0. Packaging it needs a pnpm
-  workspace build plus native tree-sitter plumbing; nobody has done it in Nix.
-- **graphify's CLI is not packaged here.** Use `pkgs.graphify` from nixpkgs.
+- **graphify's CLI is not packaged here.** Use `pkgs.graphify` from nixpkgs. The
+  skill's guidance works without it, but its CLI invocations need it.
+- **understand-anything's core is built here** (`tsc` + `pnpm deploy`). This is
+  the first Nix packaging of it, so expect it to need maintenance when upstream
+  moves its pnpm lockfile or `packageManager` pin.
 - Only opencode and Claude paths are meaningfully tested; codex/cursor targets
   follow the documented conventions but are unverified.

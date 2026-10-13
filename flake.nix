@@ -33,9 +33,49 @@
       lib.mapAttrs' (n: _: lib.nameValuePair n (dir + "/${n}"))
       (lib.filterAttrs (_: v: v == "directory") (builtins.readDir dir));
 
-    # Adding a source = one line here.
+    # understand-anything's skills must resolve to the BUILT plugin, not the raw
+    # input: their scripts import @understand-anything/core, which only exists as
+    # packages/core/dist after the tsc build. Upstream builds it with a bare
+    # `tsc`; only core is built, since the workspace's other members (dashboard,
+    # homepage) are unused. Runtime deps are all WASM/JS, so no native compile.
+    mkUnderstandCore = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      pkgs.stdenv.mkDerivation (finalAttrs: {
+        pname = "understand-anything-core";
+        version = "0.1.0";
+        src = "${inputs.understand-anything}/understand-anything-plugin";
+        pnpmDeps = pkgs.fetchPnpmDeps {
+          inherit (finalAttrs) pname version src;
+          fetcherVersion = 4;
+          hash = "sha256-ehac7mDZyUomy987+ZiSXLVBf9wa+9KcPbLrtmx3RtE=";
+        };
+        nativeBuildInputs = [pkgs.pnpm pkgs.nodejs pkgs.pnpmConfigHook];
+        buildPhase = ''
+          runHook preBuild
+          pnpm --filter @understand-anything/core run build
+          runHook postBuild
+        '';
+        # Ship only what the skills reference: agents/, skills/, hooks/, the
+        # workspace manifests, and a deployed packages/core. `pnpm deploy`
+        # materialises deps as real files; the workspace's other members ship
+        # node_modules symlinks that dangle once node_modules is not staged
+        # alongside them, so they are excluded entirely.
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/packages
+          cp -r agents skills hooks $out/
+          cp package.json pnpm-workspace.yaml $out/
+          pnpm --filter @understand-anything/core deploy --prod $out/packages/core
+          runHook postInstall
+        '';
+      });
+
+    # shortcut: tsc output is arch-independent JS, so one build serves every
+    # system. To go per-arch, make sources a function of system and expose
+    # homeManagerModules via forAll.
     sources = {
-      understand-anything = skillDirs "${inputs.understand-anything}/understand-anything-plugin/skills";
+      understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
     };
 
@@ -50,6 +90,7 @@
         mkdir -p $out
         cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
       '';
+      understand-core = mkUnderstandCore system;
     });
 
     # Registry injected by partial application, so consumers need no plumbing.
