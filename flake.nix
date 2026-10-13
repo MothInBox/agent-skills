@@ -27,6 +27,13 @@
       url = "github:DietrichGebert/ponytail";
       flake = false;
     };
+    # Pinned by ref, not the default branch: master is v3.x, which rewrites most
+    # of these skills. The tag matches what was previously installed. Bump the
+    # tag to upgrade; `nix flake update` alone will not move it.
+    oh-my-opencode-slim = {
+      url = "github:alvinunreal/oh-my-opencode-slim/v2.2.6";
+      flake = false;
+    };
   };
 
   outputs = {
@@ -106,7 +113,10 @@
       graphify.graphify = mkGraphifySkill "x86_64-linux";
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
-      local = skillDirs ./skills;
+      # skillDirs picks up every directory here. v2.2.6 ships loop-engineering
+      # in addition to the eight this used to hold; drop it explicitly if it is
+      # not wanted. The loose codemap.md file is ignored (dirs only).
+      oh-my-opencode-slim = skillDirs "${inputs.oh-my-opencode-slim}/src/skills";
     };
 
     # Flat registry: every skill from every source.

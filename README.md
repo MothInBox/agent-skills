@@ -65,18 +65,30 @@ else (a nested layout, a build step) needs a small derivation in `packages`.
 
 ## Upstream
 
-No third-party skill content is stored in this repository. Skills are fetched as
-`flake = false` inputs at evaluation time and pinned by `flake.lock` (exact rev
-+ narHash), so `nix flake update` is the only way to move them. Only skills
-written for this repo live under `skills/`.
+No third-party skill content is stored in this repository. Every skill is fetched
+as a `flake = false` input at evaluation time and pinned by `flake.lock` to an
+exact rev + narHash, so nothing can drift and no source has to be maintained
+here.
 
 | Skill | Upstream | License |
 |---|---|---|
+| clonedeps, codemap, deepwork, loop-engineering, oh-my-opencode-slim, reflect, simplify, verification-planning, worktrees | github.com/alvinunreal/oh-my-opencode-slim, pinned to tag **v2.2.6** | MIT |
 | stop-slop | github.com/hardikpandya/stop-slop | MIT |
 | ponytail | github.com/DietrichGebert/ponytail | MIT |
 | ui-ux-pro-max | github.com/nextlevelbuilder/ui-ux-pro-max-skill | MIT |
 | graphify | github.com/Graphify-Labs/graphify | MIT |
 
-`understand-anything` (github.com/Egonex-AI/Understand-Anything) is still
-vendored in source form, because its `packages/core` must be compiled. Its
-license was not verified when this was written — check it before redistributing.
+`nix flake update` will not move the oh-my-opencode-slim input, because it is
+pinned by **ref** (`/v2.2.6`) rather than the default branch. That is
+deliberate: master is v3.x, which rewrites most of those skills. To upgrade,
+change the tag in `flake.nix` and re-lock. Expect `loop-engineering` to come
+along too, since it ships in that repo's `src/skills/`.
+
+`simplify` additionally credits github.com/addyosmani/agent-skills
+(`skills/code-simplification`) as its ancestral upstream — MIT, same lineage,
+but not the file that is installed here.
+
+`understand-anything` (github.com/Egonex-AI/Understand-Anything) is the one
+remaining source vendored in raw form, because its `packages/core` must be
+compiled. Its license was not verified when this was written — check it before
+redistributing.

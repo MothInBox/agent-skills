@@ -32,6 +32,23 @@
         "type": "github"
       }
     },
+    "oh-my-opencode-slim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784658226,
+        "narHash": "sha256-9SPx4cvpwLhdCm9mj5cRbNHKply/OplJgn+uGzYPrNo=",
+        "owner": "alvinunreal",
+        "repo": "oh-my-opencode-slim",
+        "rev": "dabdfe83bac485e92b27465ac9994d2be2a862c8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alvinunreal",
+        "ref": "v2.2.6",
+        "repo": "oh-my-opencode-slim",
+        "type": "github"
+      }
+    },
     "ponytail": {
       "flake": false,
       "locked": {
@@ -52,6 +69,7 @@
       "inputs": {
         "graphify": "graphify",
         "nixpkgs": "nixpkgs",
+        "oh-my-opencode-slim": "oh-my-opencode-slim",
         "ponytail": "ponytail",
         "stop-slop": "stop-slop",
         "ui-ux-pro-max": "ui-ux-pro-max",
