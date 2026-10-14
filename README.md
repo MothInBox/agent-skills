@@ -4,7 +4,7 @@ Nix packaging for AI agent skills that had none. Skills arrive as store paths
 from `flake = false` inputs, so most of them need no build step.
 
 The full list of installable skill names, grouped by input with the
-dependencies each pulls, is in [SKILLS.md](SKILLS.md).
+dependencies each pulls, is in [docs/plugins.md](docs/plugins.md).
 
 ## Requirements
 
