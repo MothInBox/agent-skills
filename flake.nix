@@ -73,11 +73,9 @@
           cp -r agents skills hooks $out/
           cp package.json pnpm-workspace.yaml $out/
           pnpm --filter @understand-anything/core deploy --prod $out/packages/core
-          # graphology is a root-package dep, so --filter deploy cannot see it.
-          # Copy whole pnpm virtual-store entries: a package's transitive deps
-          # are SIBLINGS inside its entry, so copying just the package dir
-          # leaves graphology-utils unresolved. pnpm keeps the store under
-          # node_modules/.pnpm, and -L dereferences the symlink chain.
+          # pnpm's virtual store at node_modules/.pnpm keeps a package's
+          # transitive deps as siblings inside its entry, so copying one
+          # package dir leaves graphology-utils unresolved. -L follows the chain.
           mkdir -p $out/node_modules
           for d in node_modules/.pnpm/graphology*/node_modules; do
             cp -rL "$d"/. $out/node_modules/
