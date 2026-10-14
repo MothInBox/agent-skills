@@ -3,7 +3,7 @@
 Nix packaging for AI agent skills that had none. Skills arrive as store paths
 from `flake = false` inputs, so most of them need no build step.
 
-The installable skill names, grouped by input, are in
+The installable skill names, sorted by input, are in
 [docs/skills.md](docs/skills.md); upstream repositories, licenses, and
 dependencies are in [docs/plugins.md](docs/plugins.md).
 
@@ -90,28 +90,8 @@ else (a nested layout, a build step) needs a small derivation in `packages`.
 
 ## Upstream and licenses
 
-No third-party skill content is stored in this repository. Every skill is fetched
-as a `flake = false` input at evaluation time and pinned by `flake.lock` to an
-exact rev + narHash, so nothing can drift.
-
-| Skills | Upstream | License |
-|---|---|---|
-| clonedeps, codemap, deepwork, loop-engineering, oh-my-opencode-slim, reflect, simplify, verification-planning, worktrees | github.com/alvinunreal/oh-my-opencode-slim, pinned to tag v2.2.6 | MIT |
-| stop-slop | github.com/hardikpandya/stop-slop | MIT |
-| ponytail | github.com/DietrichGebert/ponytail | MIT |
-| ui-ux-pro-max | github.com/nextlevelbuilder/ui-ux-pro-max-skill | MIT |
-| graphify | github.com/Graphify-Labs/graphify | MIT |
-| understand-anything | github.com/Egonex-AI/Understand-Anything | unverified, check before redistributing |
-
-`nix flake update` will not move the oh-my-opencode-slim input, because it is
-pinned by ref (`/v2.2.6`) rather than the default branch. That is deliberate:
-master is v3.x, which rewrites most of those skills. To upgrade, change the tag
-in `flake.nix` and re-lock. Expect `loop-engineering` to come along too, since
-it ships in that repo's `src/skills/`.
-
-`simplify` additionally credits github.com/addyosmani/agent-skills
-(`skills/code-simplification`) as its ancestral upstream, MIT, same lineage,
-but not the file installed here.
+See [docs/plugins.md](docs/plugins.md) for the input repositories, their
+licenses, and the runtime dependencies they pull.
 
 ## Support
 

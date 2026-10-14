@@ -23,3 +23,7 @@ ref (`/v2.2.6`) rather than the default branch. That is deliberate: master is
 v3.x, which rewrites most of those skills. To upgrade, change the tag in
 `flake.nix` and re-lock. Expect `loop-engineering` to come along too, since it
 ships in that repo's `src/skills/`.
+
+`simplify` additionally credits github.com/addyosmani/agent-skills
+(`skills/code-simplification`) as its ancestral upstream, MIT, same lineage,
+but not the file installed here.
