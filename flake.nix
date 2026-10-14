@@ -27,7 +27,7 @@
     };
     # Pinned by ref; master is v3.x. Bump the tag to upgrade.
     oh-my-opencode-slim = {
-      url = "github:alvinunreal/oh-my-opencode-slim/v2.2.6";
+      url = "github:alvinunreal/oh-my-opencode-slim";
       flake = false;
     };
   };
