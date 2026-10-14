@@ -11,7 +11,7 @@ input provides are cataloged in [skills.md](skills.md).
 |---|---|---|---|
 | `understand-anything` | [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | Unverified, check before redistributing | `node`, `python3`; this flake builds `packages/core` with pnpm |
 | `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | MIT | None |
-| `oh-my-opencode-slim` | [alvinunreal/oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim), pinned to tag `v2.2.6` | MIT | None; `worktrees` shells out to `git` |
+| `oh-my-opencode-slim` | [alvinunreal/oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim), | MIT | None |
 | `ponytail` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT | None |
 | `stop-slop` | [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop) | MIT | None |
 | `graphify` | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | MIT | `graphify` CLI; not packaged here, use `pkgs.graphify` from nixpkgs |
