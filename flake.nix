@@ -2,9 +2,9 @@
   description = "Nix packaging for AI agent skills (opencode, claude, codex, cursor)";
 
   inputs = {
+    # flake.lock pins rev + narHash per input; `nix flake update` moves them except where noted.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    # One input per upstream. Adding a source = one line in `sources` below.
     understand-anything = {
       url = "github:Egonex-AI/Understand-Anything";
       flake = false;
@@ -17,8 +17,6 @@
       url = "github:nextlevelbuilder/ui-ux-pro-max-skill";
       flake = false;
     };
-    # Skills arrive as inputs, never stored in this repo: flake.lock pins an
-    # exact rev + narHash, so `nix flake update` is the only way to move them.
     stop-slop = {
       url = "github:hardikpandya/stop-slop";
       flake = false;
@@ -27,9 +25,7 @@
       url = "github:DietrichGebert/ponytail";
       flake = false;
     };
-    # Pinned by ref, not the default branch: master is v3.x, which rewrites most
-    # of these skills. The tag matches what was previously installed. Bump the
-    # tag to upgrade; `nix flake update` alone will not move it.
+    # Pinned by ref; master is v3.x. Bump the tag to upgrade.
     oh-my-opencode-slim = {
       url = "github:alvinunreal/oh-my-opencode-slim/v2.2.6";
       flake = false;
@@ -50,11 +46,8 @@
       lib.mapAttrs' (n: _: lib.nameValuePair n (dir + "/${n}"))
       (lib.filterAttrs (_: v: v == "directory") (builtins.readDir dir));
 
-    # understand-anything's skills must resolve to the BUILT plugin, not the raw
-    # input: their scripts import @understand-anything/core, which only exists as
-    # packages/core/dist after the tsc build. Upstream builds it with a bare
-    # `tsc`; only core is built, since the workspace's other members (dashboard,
-    # homepage) are unused. Runtime deps are all WASM/JS, so no native compile.
+    # This input's skills import @understand-anything/core, which only exists as packages/core/dist.
+    # shortcut: tsc output is arch-independent JS. For per-arch, make sources take system.
     mkUnderstandCore = system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in
@@ -73,53 +66,47 @@
           pnpm --filter @understand-anything/core run build
           runHook postBuild
         '';
-        # Ship only what the skills reference: agents/, skills/, hooks/, the
-        # workspace manifests, and a deployed packages/core. `pnpm deploy`
-        # materialises deps as real files; the workspace's other members ship
-        # node_modules symlinks that dangle once node_modules is not staged
-        # alongside them, so they are excluded entirely.
+        # pnpm deploy materialises real deps; other members' symlinks dangle unstaged.
         installPhase = ''
           runHook preInstall
           mkdir -p $out/packages
           cp -r agents skills hooks $out/
           cp package.json pnpm-workspace.yaml $out/
           pnpm --filter @understand-anything/core deploy --prod $out/packages/core
+          # graphology is a root-package dep, so --filter deploy cannot see it.
+          # Copy whole pnpm virtual-store entries: a package's transitive deps
+          # are SIBLINGS inside its entry, so copying just the package dir
+          # leaves graphology-utils unresolved. pnpm keeps the store under
+          # node_modules/.pnpm, and -L dereferences the symlink chain.
+          mkdir -p $out/node_modules
+          for d in node_modules/.pnpm/graphology*/node_modules; do
+            cp -rL "$d"/. $out/node_modules/
+          done
+          # Fail loudly rather than shipping a closure that looks built.
+          [ -d $out/node_modules/graphology ] || { echo "no graphology staged" >&2; exit 1; }
           runHook postInstall
         '';
       });
 
-    # shortcut: tsc output is arch-independent JS, so one build serves every
-    # system. To go per-arch, make sources a function of system and expose
-    # homeManagerModules via forAll.
-    # graphify ships lowercase skill-<agent>.md; agents want SKILL.md. This
-    # derivation is the skill directory itself, so it registers without the
-    # skillDirs helper (which expects a directory of skill dirs).
+    # shortcut: output is arch-independent, like mkUnderstandCore.
     mkGraphifySkill = system:
       nixpkgs.legacyPackages.${system}.runCommand "graphify-skill" {} ''
         mkdir -p $out
         cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
       '';
 
-    # shortcut: skill output is arch-independent, so one build serves every
-    # system. Same reasoning as mkUnderstandCore above.
     sources = {
-      # Each is an attrset mapping skill name -> store path. A single-skill repo
-      # needs a hand-written entry because skillDirs expects a dir OF skill dirs.
-      stop-slop.stop-slop = inputs.stop-slop;
+      stop-slop.stop-slop = "${inputs.stop-slop}";
       ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
 
-      # graphify's derivation IS an attrset, so it must be wrapped or its own
-      # attributes (type, drvPath, outPath, ...) land in the registry as skills.
+      # Wrapping keeps the derivation's attrs (type, drvPath, outPath) out of the registry.
       graphify.graphify = mkGraphifySkill "x86_64-linux";
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
-      # skillDirs picks up every directory here. v2.2.6 ships loop-engineering
-      # in addition to the eight this used to hold; drop it explicitly if it is
-      # not wanted. The loose codemap.md file is ignored (dirs only).
+      # v2.2.6 also ships loop-engineering; drop it if unwanted.
       oh-my-opencode-slim = skillDirs "${inputs.oh-my-opencode-slim}/src/skills";
     };
 
-    # Flat registry: every skill from every source.
     skills = lib.foldlAttrs (acc: _: set: acc // set) {} sources;
   in {
     packages = forAll (system: {
@@ -127,22 +114,17 @@
       understand-core = mkUnderstandCore system;
     });
 
-    # Registry injected by partial application, so consumers need no plumbing.
-    # cliPackages maps skill name -> a package name resolved against the
-    # CONSUMER's pkgs, so the CLI comes from their nixpkgs rather than this
-    # flake's own instance. Only skills that actually need a CLI are listed.
+    # cliPackages resolves against the consumer's pkgs, so CLIs come from their nixpkgs.
     homeManagerModules.default = import ./modules/agent-skills.nix {
       inherit skills;
-      # graphify's CLI is not in nixpkgs-unstable, so it cannot be mapped here:
-      # building it needs 24 tree-sitter grammar pins. Once it lands in
-      # nixpkgs this becomes cliPackages.graphify = "graphify";
-      cliPackages = {};
+      # graphify's CLI needs 24 tree-sitter pins; map it once it lands in nixpkgs.
+      # Merge steps are Python and python3 is not assumed on PATH; keyed off the
+      # source, not a name prefix, so unrelated understand-* skills don't pull it in.
+      cliPackages = lib.genAttrs (builtins.attrNames sources.understand-anything) (_: "python3");
     };
 
     agentSkills = skills;
 
-    # Raw directories for consumers who place files themselves rather than via
-    # the home-manager module: ponytail's slash commands and its plugin.
     commandsDir = "${inputs.ponytail}/.opencode/command";
     pluginsDir = "${inputs.ponytail}/.opencode/plugins";
   };
