@@ -84,7 +84,7 @@ else (a nested layout, a build step) needs a small derivation in `packages`.
 
 ## Caveats
 
-- **graphify's CLI is not packaged here.** Use `pkgs.graphify` from nixpkgs. The skill's guidance works without it, but its CLI invocations need it.
+- **graphify's CLI is built here.** `packages.<system>.graphify` is a uv2nix virtualenv built from the input's `uv.lock`; it exposes only `bin/graphify` and `bin/graphify-mcp`, so it does not collide with the `python3` installed for `understand-*`. Upstream moving its `uv.lock` or requiring an unbuildable sdist is the failure mode.
 - **understand-anything's core is built here** (`tsc` + `pnpm deploy`). Upstream moving its pnpm lockfile or `packageManager` pin breaks the build until this repo catches up.
 - opencode and Claude paths are meaningfully tested; codex and cursor follow the documented conventions but are unverified.
 

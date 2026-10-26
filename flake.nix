@@ -5,6 +5,32 @@
     # flake.lock pins rev + narHash per input; `nix flake update` moves them except where noted.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # uv2nix builds graphify from its uv.lock; see mkGraphifyCli.
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+    };
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+    };
+
+    mattpocock-skills = {
+      url = "github:mattpocock/skills/v1.3.1";
+      flake = false;
+    };
+    context7 = {
+      url = "github:upstash/context7";
+      flake = false;
+    };
+
     understand-anything = {
       url = "github:Egonex-AI/Understand-Anything";
       flake = false;
@@ -93,6 +119,38 @@
         cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
       '';
 
+    # graphify's ~30 base deps include 19 tree-sitter grammars absent from
+    # nixpkgs. Build from the upstream uv.lock instead of pinning them by hand.
+    graphifyWorkspace = inputs.uv2nix.lib.workspace.loadWorkspace {
+      workspaceRoot = inputs.graphify;
+    };
+    graphifyOverlay = graphifyWorkspace.mkPyprojectOverlay {
+      sourcePreference = "wheel";
+    };
+    mkGraphifyCli = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      pythonSet = (pkgs.callPackage inputs.pyproject-nix.build.packages {
+        python = pkgs.python3;
+      }).overrideScope (lib.composeManyExtensions [
+        inputs.pyproject-build-systems.overlays.wheel
+        graphifyOverlay
+      ]);
+      venv = pythonSet.mkVirtualEnv "graphify-env" graphifyWorkspace.deps.default;
+    in
+      # Expose only the entry points: the venv's bin/python3 would collide with
+      # the pkgs.python3 installed for understand-*. The symlinked scripts keep
+      # their venv shebangs, so the skill's `which graphify` + import probe works.
+      pkgs.linkFarm "graphify-cli" [
+        {
+          name = "bin/graphify";
+          path = "${venv}/bin/graphify";
+        }
+        {
+          name = "bin/graphify-mcp";
+          path = "${venv}/bin/graphify-mcp";
+        }
+      ];
+
     sources = {
       stop-slop.stop-slop = "${inputs.stop-slop}";
       ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
@@ -103,6 +161,15 @@
       ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
       # v2.2.6 also ships loop-engineering; drop it if unwanted.
       oh-my-opencode-slim = skillDirs "${inputs.oh-my-opencode-slim}/src/skills";
+
+      # Upstream plugin manifest = engineering (20) + productivity (7).
+      mattpocock-engineering = skillDirs "${inputs.mattpocock-skills}/skills/engineering";
+      mattpocock-productivity = skillDirs "${inputs.mattpocock-skills}/skills/productivity";
+
+      # Repo-wide skills plus the pi-specific entry (context7-docs).
+      context7 =
+        (skillDirs "${inputs.context7}/skills")
+        // (skillDirs "${inputs.context7}/packages/pi/skills");
     };
 
     skills = lib.foldlAttrs (acc: _: set: acc // set) {} sources;
@@ -110,15 +177,19 @@
     packages = forAll (system: {
       default = mkGraphifySkill system;
       understand-core = mkUnderstandCore system;
+      graphify = mkGraphifyCli system;
     });
 
     # cliPackages resolves against the consumer's pkgs, so CLIs come from their nixpkgs.
     homeManagerModules.default = import ./modules/agent-skills.nix {
       inherit skills;
-      # graphify's CLI needs 24 tree-sitter pins; map it once it lands in nixpkgs.
       # Merge steps are Python and python3 is not assumed on PATH; keyed off the
       # source, not a name prefix, so unrelated understand-* skills don't pull it in.
       cliPackages = lib.genAttrs (builtins.attrNames sources.understand-anything) (_: "python3");
+      # Lockfile-built CLIs are per-system derivations, not nixpkgs attributes.
+      extraPackages = system: {
+        graphify = mkGraphifyCli system;
+      };
     };
 
     agentSkills = skills;

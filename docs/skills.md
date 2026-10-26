@@ -1,6 +1,6 @@
 # Skills
 
-The 28 skills this flake can install, sorted by the input that provides them.
+The 62 skills this flake can install, sorted by the input that provides them.
 Every name below is a valid entry in `programs.agent-skills.skills`; an empty
 list installs all of them. Input repositories, licenses, and dependencies are
 in [plugins.md](plugins.md).
@@ -32,9 +32,56 @@ in [plugins.md](plugins.md).
 | `simplify` | Simplifies code for clarity without changing behavior | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
 | `verification-planning` | Builds project-specific verification plans before non-trivial changes | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
 | `worktrees` | Manages git worktrees as isolated coding lanes | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
+| `ai-estimates` | Estimates task duration for a human working with AI | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
+| `deanchor` | Treats examples as evidence of intent, not templates to copy | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
+| `step-back` | Pauses patch-on-patch work and proposes a cleaner direction | [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim) |
 | `ponytail` | Lazy senior dev mode: the smallest change that fully solves the task | [ponytail](https://github.com/DietrichGebert/ponytail) |
 | `stop-slop` | Removes AI writing patterns from prose | [stop-slop](https://github.com/hardikpandya/stop-slop) |
 | `graphify` | Turns code, docs, papers, images, and videos into a persistent knowledge graph | [graphify](https://github.com/Graphify-Labs/graphify) |
+
+### Matt Pocock
+
+The 27 skills in the upstream plugin manifest (`skills/engineering` +
+`skills/productivity`). `in-progress/` and `misc/` are not shipped.
+
+| Skill | Description |
+|---|---|
+| `ask-matt` | Router for choosing which skill or flow fits the situation |
+| `code-review` | Two-axis review of a diff: repo standards and originating spec |
+| `codebase-design` | Vocabulary and discipline for designing deep modules |
+| `diagnosing-bugs` | Feedback-loop-first diagnosis for hard bugs and regressions |
+| `domain-modeling` | Build and sharpen `GLOSSARY.md` and ADRs |
+| `grill-with-docs` | Grilling session that also writes ADRs and glossary entries |
+| `implement` | Implement a spec or ticket set, driving TDD at agreed seams |
+| `implement-spec` | Implement a whole spec as a ticket task graph |
+| `improve-codebase-architecture` | Survey deepening opportunities, then grill one |
+| `pr` | Shape a pull request body and merge-danger call |
+| `prototype` | Throwaway prototype for a state/logic or UI question |
+| `research` | Primary-source research captured as a cited Markdown note |
+| `retro` | Session retrospective on the agent environment |
+| `setup-matt-pocock-skills` | Configure tracker, triage labels, and domain docs once per repo |
+| `tdd` | Red-green-refactor TDD with vertical slices |
+| `to-spec` | Synthesize the conversation into a published spec |
+| `to-tickets` | Break a plan into tracer-bullet tickets with blocking edges |
+| `triage` | Move issues through triage roles and write agent-ready briefs |
+| `wayfinder` | Multi-session decision map for work too large for one session |
+| `wizard` | Generate an interactive bash wizard for human-only steps |
+| `grill-me` | Relentless interview to sharpen a plan or design |
+| `grilling` | Shared interview primitive behind the grill flows |
+| `handoff` | Compact the conversation into a handoff document |
+| `teach` | Teach a concept over multiple sessions in a workspace |
+| `to-questionnaire` | Turn a decision into an async questionnaire |
+| `wait-what` | Re-pitch a message that did not land |
+| `writing-for-agents` | Writing skills, AGENTS.md, and agent-facing docs |
+
+### Context7
+
+| Skill | Description |
+|---|---|
+| `context7-docs` | Pi-specific: use the Context7 MCP tools for current library docs |
+| `context7-mcp` | Generic MCP-tools guidance for library docs and API references |
+| `find-docs` | CLI fallback via `npx ctx7@latest library` / `docs` |
+| `context7-cli` | `ctx7` setup, login, and documentation commands |
 
 ## Notes
 

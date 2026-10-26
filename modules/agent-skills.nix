@@ -1,14 +1,20 @@
 {
   skills,
   cliPackages ? {},
+  extraPackages ? (_: {}),
 }: {config, lib, pkgs, ...}: let
   cfg = config.programs.agent-skills;
   inherit (lib) mkOption types mkIf mkMerge mapAttrs';
   # An empty skills list installs everything in the registry.
   selected = if cfg.skills == [] then builtins.attrNames skills else cfg.skills;
 
+  # extraPackages is keyed by skill name and resolved per-system, for CLIs that
+  # are derivations (uv2nix, pnpm builds) rather than nixpkgs attributes.
+  extra = extraPackages pkgs.system;
   clis = builtins.filter (n: n != null) (map (name:
-    if cliPackages ? ${name}
+    if builtins.hasAttr name extra
+    then extra.${name}
+    else if cliPackages ? ${name}
     then pkgs.${cliPackages.${name}}
     else null)
   selected);
