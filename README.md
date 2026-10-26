@@ -58,6 +58,7 @@ Default targets: `.agents/skills`, `.config/opencode/skills`, `.claude/skills`,
 - `homeManagerModules.default`: the module above
 - `agentSkills`: attrset of skill name to store path
 - `packages.default`: the graphify skill directory. graphify ships `skill-opencode.md` lowercase; agents want `SKILL.md`, so this derivation renames it.
+- `packages.graphify`: uv2nix-built CLI from the input's `uv.lock`, exposing only `bin/graphify` and `bin/graphify-mcp`
 - `packages.understand-core`: the built understand-anything core
 - `commandsDir`, `pluginsDir`: ponytail's slash commands and plugins, for consumers who place files themselves
 

@@ -51,7 +51,9 @@
       url = "github:DietrichGebert/ponytail";
       flake = false;
     };
-    # Pinned by ref; master is v3.x. Bump the tag to upgrade.
+    # The v2.2.6 pin lives in flake.lock, not this URL: master is v3.x and
+    # rewrites the skills. A bare `nix flake lock` moves this input; restore
+    # the lock node afterward instead of editing the URL.
     oh-my-opencode-slim = {
       url = "github:alvinunreal/oh-my-opencode-slim";
       flake = false;

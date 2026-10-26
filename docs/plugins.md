@@ -29,11 +29,12 @@ narHash, so nothing can drift. The skills each input provides are cataloged in
 
 ## Pinning
 
-`nix flake update` will not move `oh-my-opencode-slim`, because it is pinned by
-ref (`/v2.2.6`) rather than the default branch. That is deliberate: master is
-v3.x, which rewrites most of those skills. To upgrade, change the tag in
-`flake.nix` and re-lock. Expect `loop-engineering` to come along too, since it
-ships in that repo's `src/skills/`.
+`oh-my-opencode-slim` is pinned to `v2.2.6` in `flake.lock`, not in the input URL.
+That is deliberate: master is v3.x, which rewrites most of those skills. A bare
+`nix flake lock` moves the input to master, so after a lock refresh restore the
+lock node (rev `dabdfe8`) rather than editing the URL or bumping the tag. To
+upgrade intentionally, update both the lock node and this note. Expect
+`loop-engineering` and the other `src/skills/` entries to change with it.
 
 `mattpocock-skills` is pinned to `v1.3.1` for the same reason: the repo ships
 changesets continuously and skill prose changes between tags. `context7` follows
