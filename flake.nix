@@ -51,6 +51,16 @@
       url = "github:DietrichGebert/ponytail";
       flake = false;
     };
+
+    # Narrow dir inputs keep the large upstream repos out of the store.
+    impeccable = {
+      url = "github:pbakaus/impeccable?dir=.claude/skills/impeccable";
+      flake = false;
+    };
+    paper-shaders = {
+      url = "github:akillness/jeo-skills?dir=.agent-skills/paper-shaders";
+      flake = false;
+    };
     # The v2.2.6 pin lives in flake.lock, not this URL: master is v3.x and
     # rewrites the skills. A bare `nix flake lock` moves this input; restore
     # the lock node afterward instead of editing the URL.
@@ -121,6 +131,23 @@
         cp ${inputs.graphify}/graphify/skill-opencode.md $out/SKILL.md
       '';
 
+    # OMP installs skills under ~/.agents/skills, not Claude's plugin layout.
+    # Upstream's core SKILL.md hardcodes a plugin-root prefix, so search.py
+    # cannot be found there. Make its paths skill-relative like the sub-skills.
+    # Backslash keeps the literal shell variable name out of Nix interpolation.
+    pluginRootPrefix = "\${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/";
+    mkUiUxProMaxSkill = system:
+      nixpkgs.legacyPackages.${system}.runCommand "ui-ux-pro-max-skill" {} ''
+        cp -r ${inputs.ui-ux-pro-max}/.claude/skills/ui-ux-pro-max $out
+        chmod -R u+w $out
+        substituteInPlace $out/SKILL.md \
+          --replace-fail '"${pluginRootPrefix}' '"scripts/' \
+          --replace-fail "The search script lives inside this skill's own directory, not the project directory. Always invoke it by its full path — do not assume a particular working directory:" "Script paths below are relative to this skill's directory (the folder containing SKILL.md), not the project directory. Build the full path from that directory and keep the working directory at the project root."
+        # Fail instead of shipping a skill whose search path still cannot resolve.
+        test -f $out/scripts/search.py
+        ! grep -q CLAUDE_PLUGIN_ROOT $out/SKILL.md
+      '';
+
     # graphify's ~30 base deps include 19 tree-sitter grammars absent from
     # nixpkgs. Build from the upstream uv.lock instead of pinning them by hand.
     graphifyWorkspace = inputs.uv2nix.lib.workspace.loadWorkspace {
@@ -156,11 +183,17 @@
     sources = {
       stop-slop.stop-slop = "${inputs.stop-slop}";
       ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
+      impeccable.impeccable = "${inputs.impeccable}";
+      paper-shaders.paper-shaders = "${inputs.paper-shaders}";
 
       # Wrapping keeps the derivation's attrs (type, drvPath, outPath) out of the registry.
       graphify.graphify = mkGraphifySkill "x86_64-linux";
       understand-anything = skillDirs "${mkUnderstandCore "x86_64-linux"}/skills";
-      ui-ux-pro-max = skillDirs "${inputs.ui-ux-pro-max}/.claude/skills";
+      ui-ux-pro-max =
+        (skillDirs "${inputs.ui-ux-pro-max}/.claude/skills")
+        // {
+          ui-ux-pro-max = mkUiUxProMaxSkill "x86_64-linux";
+        };
       # v2.2.6 also ships loop-engineering; drop it if unwanted.
       oh-my-opencode-slim = skillDirs "${inputs.oh-my-opencode-slim}/src/skills";
 
@@ -187,7 +220,11 @@
       inherit skills;
       # Merge steps are Python and python3 is not assumed on PATH; keyed off the
       # source, not a name prefix, so unrelated understand-* skills don't pull it in.
-      cliPackages = lib.genAttrs (builtins.attrNames sources.understand-anything) (_: "python3");
+      cliPackages =
+        (lib.genAttrs (builtins.attrNames sources.understand-anything) (_: "python3"))
+        // {
+          "ui-ux-pro-max" = "python3";
+        };
       # Lockfile-built CLIs are per-system derivations, not nixpkgs attributes.
       extraPackages = system: {
         graphify = mkGraphifyCli system;

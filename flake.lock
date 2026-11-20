@@ -32,6 +32,24 @@
         "type": "github"
       }
     },
+    "impeccable": {
+      "flake": false,
+      "locked": {
+        "dir": ".claude/skills/impeccable",
+        "lastModified": 1795039099,
+        "narHash": "sha256-vtmRhNPnX974JYvn5BKXeJ1JpBusS/0O57zTPVxbJPg=",
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "rev": "b49177d32788f2dc585c42831d845dacf1ebed2c",
+        "type": "github"
+      },
+      "original": {
+        "dir": ".claude/skills/impeccable",
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "type": "github"
+      }
+    },
     "mattpocock-skills": {
       "flake": false,
       "locked": {
@@ -78,6 +96,24 @@
       "original": {
         "owner": "alvinunreal",
         "repo": "oh-my-opencode-slim",
+        "type": "github"
+      }
+    },
+    "paper-shaders": {
+      "flake": false,
+      "locked": {
+        "dir": ".agent-skills/paper-shaders",
+        "lastModified": 1795191988,
+        "narHash": "sha256-JCpPJRWIOtKnnJZDtrDikqd2Lh2HhdWtfTZfYvnvk3E=",
+        "owner": "akillness",
+        "repo": "jeo-skills",
+        "rev": "0eeaa80c4fa31719c953c34c7b7a53655010e769",
+        "type": "github"
+      },
+      "original": {
+        "dir": ".agent-skills/paper-shaders",
+        "owner": "akillness",
+        "repo": "jeo-skills",
         "type": "github"
       }
     },
@@ -147,9 +183,11 @@
       "inputs": {
         "context7": "context7",
         "graphify": "graphify",
+        "impeccable": "impeccable",
         "mattpocock-skills": "mattpocock-skills",
         "nixpkgs": "nixpkgs",
         "oh-my-opencode-slim": "oh-my-opencode-slim",
+        "paper-shaders": "paper-shaders",
         "ponytail": "ponytail",
         "pyproject-build-systems": "pyproject-build-systems",
         "pyproject-nix": "pyproject-nix",

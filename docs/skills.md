@@ -1,6 +1,6 @@
 # Skills
 
-The 62 skills this flake can install, sorted by the input that provides them.
+The 64 skills this flake can install, sorted by the input that provides them.
 Every name below is a valid entry in `programs.agent-skills.skills`; an empty
 list installs all of them. Input repositories, licenses, and dependencies are
 in [plugins.md](plugins.md).
@@ -38,6 +38,8 @@ in [plugins.md](plugins.md).
 | `ponytail` | Lazy senior dev mode: the smallest change that fully solves the task | [ponytail](https://github.com/DietrichGebert/ponytail) |
 | `stop-slop` | Removes AI writing patterns from prose | [stop-slop](https://github.com/hardikpandya/stop-slop) |
 | `graphify` | Turns code, docs, papers, images, and videos into a persistent knowledge graph | [graphify](https://github.com/Graphify-Labs/graphify) |
+| `impeccable` | Design, redesign, critique, audit, polish, and animate frontends with the Impeccable design vocabulary | [impeccable](https://github.com/pbakaus/impeccable) |
+| `paper-shaders` | Integrate and diagnose Paper Shaders (MeshGradient, ShaderMount) WebGL effects in vanilla JS or React | [paper-shaders](https://github.com/akillness/jeo-skills) |
 
 ### Matt Pocock
 
@@ -89,6 +91,7 @@ The 27 skills in the upstream plugin manifest (`skills/engineering` +
 - `understand-figma` needs a Figma API token for the Figma REST API.
 - Image-generating styles in `design` use external AI providers and need their own API access.
 - The ponytail input also ships `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`, and `ponytail-review`; this flake exposes only the main skill.
+- `ui-ux-pro-max` pulls `python3` for its local `search.py`; its packaged SKILL.md uses skill-relative script paths so the script resolves under `~/.agents/skills`.
 
 ## Usage
 
