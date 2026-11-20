@@ -20,6 +20,7 @@ narHash, so nothing can drift. The skills each input provides are cataloged in
 | `context7` | [upstash/context7](https://github.com/upstash/context7) | MIT | MCP skills need the Context7 server; CLI skills use `npx ctx7@latest` |
 | `impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Apache-2.0 | None |
 | `paper-shaders` | [akillness/jeo-skills](https://github.com/akillness/jeo-skills) | MIT | None |
+| `mcp-21st` | [21st-dev/magic-mcp](https://github.com/21st-dev/magic-mcp) | ISC | 21st MCP server at `https://21st.dev/api/mcp` (API key) |
 
 ## Build inputs
 
@@ -53,3 +54,6 @@ is fetched from their large upstream repositories. `ui-ux-pro-max` is rebuilt
 by `mkUiUxProMaxSkill`: upstream's core SKILL.md hardcodes Claude's
 `${CLAUDE_PLUGIN_ROOT}` prefix, which does not resolve in OMP's
 `~/.agents/skills` layout. The packaged copy uses skill-relative paths instead.
+
+`mcp-21st` also uses `?dir=`; the 21st MCP server itself is configured in the
+consumer's OMP `mcp.json`, not by this flake.

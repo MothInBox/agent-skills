@@ -67,6 +67,24 @@
         "type": "github"
       }
     },
+    "mcp-21st": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/21st-ui",
+        "lastModified": 1788986301,
+        "narHash": "sha256-NPfaxXY9Ne0AhQA1OsCwZvZcyV4KRMtzxn1UgfPCK7k=",
+        "owner": "21st-dev",
+        "repo": "magic-mcp",
+        "rev": "6b5299e8a83ceffa73d4fc4e148905bb3eeeeb55",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/21st-ui",
+        "owner": "21st-dev",
+        "repo": "magic-mcp",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1791734076,
@@ -185,6 +203,7 @@
         "graphify": "graphify",
         "impeccable": "impeccable",
         "mattpocock-skills": "mattpocock-skills",
+        "mcp-21st": "mcp-21st",
         "nixpkgs": "nixpkgs",
         "oh-my-opencode-slim": "oh-my-opencode-slim",
         "paper-shaders": "paper-shaders",

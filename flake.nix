@@ -61,6 +61,10 @@
       url = "github:akillness/jeo-skills?dir=.agent-skills/paper-shaders";
       flake = false;
     };
+    mcp-21st = {
+      url = "github:21st-dev/magic-mcp?dir=skills/21st-ui";
+      flake = false;
+    };
     # The v2.2.6 pin lives in flake.lock, not this URL: master is v3.x and
     # rewrites the skills. A bare `nix flake lock` moves this input; restore
     # the lock node afterward instead of editing the URL.
@@ -185,6 +189,7 @@
       ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
       impeccable.impeccable = "${inputs.impeccable}";
       paper-shaders.paper-shaders = "${inputs.paper-shaders}";
+      "21st-ui"."21st-ui" = "${inputs.mcp-21st}";
 
       # Wrapping keeps the derivation's attrs (type, drvPath, outPath) out of the registry.
       graphify.graphify = mkGraphifySkill "x86_64-linux";

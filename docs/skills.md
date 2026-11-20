@@ -1,6 +1,6 @@
 # Skills
 
-The 64 skills this flake can install, sorted by the input that provides them.
+The 65 skills this flake can install, sorted by the input that provides them.
 Every name below is a valid entry in `programs.agent-skills.skills`; an empty
 list installs all of them. Input repositories, licenses, and dependencies are
 in [plugins.md](plugins.md).
@@ -40,6 +40,7 @@ in [plugins.md](plugins.md).
 | `graphify` | Turns code, docs, papers, images, and videos into a persistent knowledge graph | [graphify](https://github.com/Graphify-Labs/graphify) |
 | `impeccable` | Design, redesign, critique, audit, polish, and animate frontends with the Impeccable design vocabulary | [impeccable](https://github.com/pbakaus/impeccable) |
 | `paper-shaders` | Integrate and diagnose Paper Shaders (MeshGradient, ShaderMount) WebGL effects in vanilla JS or React | [paper-shaders](https://github.com/akillness/jeo-skills) |
+| `21st-ui` | Find, install, and generate UI with the 21st.dev MCP catalog | [21st MCP](https://github.com/21st-dev/magic-mcp) |
 
 ### Matt Pocock
 
