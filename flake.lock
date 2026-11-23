@@ -211,6 +211,7 @@
         "pyproject-build-systems": "pyproject-build-systems",
         "pyproject-nix": "pyproject-nix",
         "stop-slop": "stop-slop",
+        "taste-skill": "taste-skill",
         "ui-ux-pro-max": "ui-ux-pro-max",
         "understand-anything": "understand-anything",
         "uv2nix": "uv2nix"
@@ -229,6 +230,24 @@
       "original": {
         "owner": "hardikpandya",
         "repo": "stop-slop",
+        "type": "github"
+      }
+    },
+    "taste-skill": {
+      "flake": false,
+      "locked": {
+        "dir": "skills/taste-skill",
+        "lastModified": 1795378205,
+        "narHash": "sha256-NS6nRA3Leuc8WC6umaLvhyqIRbjTH6w3b88NcDGht4M=",
+        "owner": "Leonxlnx",
+        "repo": "taste-skill",
+        "rev": "6c0b5c78f5d31776e2210305abaa210cdc0030bf",
+        "type": "github"
+      },
+      "original": {
+        "dir": "skills/taste-skill",
+        "owner": "Leonxlnx",
+        "repo": "taste-skill",
         "type": "github"
       }
     },

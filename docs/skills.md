@@ -39,6 +39,7 @@ in [plugins.md](plugins.md).
 | `stop-slop` | Removes AI writing patterns from prose | [stop-slop](https://github.com/hardikpandya/stop-slop) |
 | `graphify` | Turns code, docs, papers, images, and videos into a persistent knowledge graph | [graphify](https://github.com/Graphify-Labs/graphify) |
 | `impeccable` | Design, redesign, critique, audit, polish, and animate frontends with the Impeccable design vocabulary | [impeccable](https://github.com/pbakaus/impeccable) |
+| `taste-skill` | Art direction, reference images, and browser checks instead of generic AI page output | [taste-skill](https://github.com/Leonxlnx/taste-skill) |
 | `paper-shaders` | Integrate and diagnose Paper Shaders (MeshGradient, ShaderMount) WebGL effects in vanilla JS or React | [paper-shaders](https://github.com/akillness/jeo-skills) |
 | `21st-ui` | Find, install, and generate UI with the 21st.dev MCP catalog | [21st MCP](https://github.com/21st-dev/magic-mcp) |
 

@@ -61,6 +61,10 @@
       url = "github:akillness/jeo-skills?dir=.agent-skills/paper-shaders";
       flake = false;
     };
+    taste-skill = {
+      url = "github:Leonxlnx/taste-skill?dir=skills/taste-skill";
+      flake = false;
+    };
     mcp-21st = {
       url = "github:21st-dev/magic-mcp?dir=skills/21st-ui";
       flake = false;
@@ -162,12 +166,13 @@
     };
     mkGraphifyCli = system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      pythonSet = (pkgs.callPackage inputs.pyproject-nix.build.packages {
-        python = pkgs.python3;
-      }).overrideScope (lib.composeManyExtensions [
-        inputs.pyproject-build-systems.overlays.wheel
-        graphifyOverlay
-      ]);
+      pythonSet =
+        (pkgs.callPackage inputs.pyproject-nix.build.packages {
+          python = pkgs.python3;
+        }).overrideScope (lib.composeManyExtensions [
+          inputs.pyproject-build-systems.overlays.wheel
+          graphifyOverlay
+        ]);
       venv = pythonSet.mkVirtualEnv "graphify-env" graphifyWorkspace.deps.default;
     in
       # Expose only the entry points: the venv's bin/python3 would collide with
@@ -189,6 +194,7 @@
       ponytail.ponytail = "${inputs.ponytail}/skills/ponytail";
       impeccable.impeccable = "${inputs.impeccable}";
       paper-shaders.paper-shaders = "${inputs.paper-shaders}";
+      taste-skill.taste-skill = "${inputs.taste-skill}";
       "21st-ui"."21st-ui" = "${inputs.mcp-21st}";
 
       # Wrapping keeps the derivation's attrs (type, drvPath, outPath) out of the registry.
